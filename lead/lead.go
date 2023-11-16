@@ -9,10 +9,10 @@ import (
 
 type Lead struct {
 	gorm.Model
-	Name    string
-	Company string
-	Email   string
-	Phone   int
+	Name    string `json:"name"`
+	Company string `json:"company"`
+	Email   string `json:"email"`
+	Phone   int    `json:"phone"`
 }
 
 func GetLeads(c *fiber.Ctx) {
@@ -22,7 +22,7 @@ func GetLeads(c *fiber.Ctx) {
 	c.JSON(leads)
 }
 func GetLead(c *fiber.Ctx) {
-	id := c.Paramas("id")
+	id := c.Params("id")
 	db := database.DBConn
 	var lead Lead
 	db.Find(&lead, id)
@@ -33,7 +33,7 @@ func NewLead(c *fiber.Ctx) {
 	db := database.DBConn
 	lead := new(Lead)
 	if err := c.BodyParser(lead); err != nil {
-		c.status(503).Send(err)
+		c.Status(503).Send(err)
 		return
 	}
 	db.Create(&lead)
@@ -45,7 +45,7 @@ func DeleteLead(c *fiber.Ctx) {
 	var lead Lead
 	db.First(&lead, id)
 	if lead.Name == "" {
-		c.status(500).Send("No lead found with ID")
+		c.Status(500).Send("No lead found with ID")
 		return
 	}
 	db.Delete(&lead)
